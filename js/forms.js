@@ -1,0 +1,4 @@
+function ask(title,fields,vals={}){return new Promise(res=>{const d=document.createElement('dialog');
+ d.innerHTML=`<form method="dialog"><h3>${esc(title)}</h3>${fields.map(([n,l,o,dl])=>`<label>${l}${Array.isArray(o)?`<select name="${n}">${o.map(x=>{const v=Array.isArray(x)?x[0]:x,t=Array.isArray(x)?x[1]:x;return`<option value="${esc(v)}" ${v==vals[n]?'selected':''}>${esc(t)}</option>`}).join('')}</select>`:`<input name="${n}" value="${esc(vals[n])}" ${dl?`list="dl_${n}"`:''}>${dl?`<datalist id="dl_${n}">${dl.map(x=>`<option value="${esc(x)}">`).join('')}</datalist>`:''}`}</label>`).join('')}<div class="row"><button value="ok" class="pri">שמור</button><button value="x">ביטול</button></div></form>`;
+ document.body.append(d);d.onclose=()=>{const ok=d.returnValue==='ok',o={};if(ok)new FormData(d.querySelector('form')).forEach((v,k)=>o[k]=v);d.remove();res(ok?o:null)};d.showModal()})}
+
