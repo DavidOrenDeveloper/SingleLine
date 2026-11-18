@@ -6,7 +6,7 @@ async function readPdf(f){let t='';try{const pdf=await pdfjsLib.getDocument({dat
 async function addFiles(files){for(const f of files){const r=await readPdf(f),key=uid();try{await idb('put',key,f)}catch(e){}upFile(key,f);
  let d=S.d.find(x=>N(x.num)===N(r.num));if(!d){d={id:uid(),num:r.num,name:f.name.replace(/\.pdf$/i,''),status:'לא הוגדר',revs:[]};S.d.push(d)}
  d.revs.push({date:r.date,file:f.name,key,found:r.found})}save();render()}
-async function openRev(k){try{let f=await idb('get',k);if(!f)f=await dlFile(k);if(!f)throw 0;window.open(URL.createObjectURL(f),'_blank')}catch(e){alert('הקובץ לא שמור במכשיר הזה — העלה אותו שוב בלשונית תוכניות')}}
-function openP(id){const p=S.p.find(x=>x.id===id),d=dOf(p);if(!d)return alert(`⚠ אין תוכנית ללוח ${p.name}`+(p.dwg?` (מצופה: ${p.dwg})`:' — לא מקושרת תוכנית'));openRev(cur(d).key)}
+function openRev(k,find){if(!k)return alert('לתוכנית זו אין קובץ — העלה את הקובץ בלשונית תוכניות');openDoc({key:k,title:vOpenRevTitle(k),find})}
+function openP(id){const p=S.p.find(x=>x.id===id),d=dOf(p);if(!d)return alert(`⚠ אין תוכנית ללוח ${p.name}`+(p.dwg?` (מצופה: ${p.dwg})`:' — לא מקושרת תוכנית'));openRev(cur(d).key,p.name)}
 const nums=()=>S.d.map(d=>d.num);
 

@@ -17,7 +17,7 @@ function seed(){
  ['DPB-308','לוח קריטי',-1,'','E-AL-P01-4']];
  return{b,p:P.map(([name,desc,i,f,dwg])=>({id:uid(),name,desc,b:i<0?'':'b'+i,f,dwg})),d:[],c:{...DEF}};
 }
-let S;try{S=JSON.parse(localStorage.getItem(K.data))}catch(e){}S=S||seed();S.g=S.g||[];
+let S;try{S=JSON.parse(localStorage.getItem(K.data))}catch(e){}S=S||seed();S.g=S.g||[];S.a=S.a||[];
 const save=()=>{try{localStorage.setItem(K.data,JSON.stringify(S))}catch(e){}if(window.syncSoon)syncSoon()};
 const db=new Promise((res,rej)=>{const r=indexedDB.open(K.idb,1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
 const idb=async(m,k,v)=>{const d=await db;return new Promise((res,rej)=>{const o=d.transaction('f',m==='get'?'readonly':'readwrite').objectStore('f');const r=m==='get'?o.get(k):m==='put'?o.put(v,k):o.delete(k);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})};
