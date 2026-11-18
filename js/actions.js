@@ -1,6 +1,6 @@
 async function editP(id,pre){const p=id?S.p.find(x=>x.id===id):{name:'',desc:'',b:'',f:'',dwg:'',...pre};
  const fl=[...new Set(S.b.flatMap(b=>b.floors))];
- const o=await ask(id?'עריכת לוח':'לוח חדש',[['name',id?'שם לוח':'שם לוח (אפשר כמה, מופרדים בפסיק)'],['desc','תיאור'],['b','בניין',[['','לא שויך'],...bOpts()]],['f','קומה',null,fl],['dwg','מס׳ תוכנית',null,nums()]],p);
+ const o=await ask(id?'עריכת לוח':'לוח חדש',[['name',id?'שם לוח':'שם לוח (אפשר כמה, מופרדים בפסיק)'],['desc','תיאור'],['b','בניין',[['','לא שויך'],...bOpts()]],['f','קומה',null,fl],['dwg','מס׳ תוכנית',null,nums()],['date','תאריך (yyyy-mm-dd, ריק = לפי התוכנית)']],{date:'',...p});
  if(!o)return;if(id)Object.assign(p,o);else o.name.split(/[,\n،]/).map(s=>s.trim()).filter(Boolean).forEach(n=>S.p.push({id:uid(),...o,name:n}));save();render()}
 function delP(id){if(confirm('למחוק את הלוח?')){S.p=S.p.filter(x=>x.id!==id);save();render()}}
 async function editD(id){const d=S.d.find(x=>x.id===id),c=cur(d);

@@ -25,4 +25,4 @@ const N=s=>String(s||'').trim().toUpperCase(),bn=id=>(S.b.find(b=>b.id===id)||{n
 const dOf=p=>p.dwg?S.d.find(d=>N(d.num)===N(p.dwg)):null,has=p=>!!dOf(p),st=p=>has(p)?dOf(p).status:'חסר',col=p=>has(p)?S.c.ok:S.c.miss;
 const cur=d=>d.revs.reduce((a,r)=>!a||(r.date||'')>=(a.date||'')?r:a,null);
 const fmt=d=>d?d.split('-').reverse().join('/'):'ללא תאריך';
-
+const pDate=p=>p.date||(has(p)?cur(dOf(p)).date:'');

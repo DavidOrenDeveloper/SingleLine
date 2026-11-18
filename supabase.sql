@@ -19,18 +19,20 @@ alter publication supabase_realtime add table public.entities;
 -- insert into public.members(user_id,role) select id,'editor' from auth.users where email='YOUR@EMAIL';
 -- insert into public.members(user_id,role) select id,'viewer' from auth.users where email='WORKER@EMAIL';
 
--- ===== ניהול עובדים מתוך האפליקציה (להרצה פעם אחת ב-SQL Editor) =====
+-- ===== ניהול עובדים מתוך האפליקציה — מנהל בלבד: showplansapp@gmail.com (להרצה ב-SQL Editor; בטוח להריץ שוב) =====
 create extension if not exists pgcrypto with schema extensions;
 alter table public.members add column if not exists pw text;
+create or replace function public.is_admin() returns boolean language sql stable security definer set search_path=public,auth as $$ select lower(coalesce(auth.jwt()->>'email',''))='showplansapp@gmail.com' $$;
+insert into public.members(user_id,role) select id,'editor' from auth.users where lower(email)='showplansapp@gmail.com' on conflict (user_id) do update set role='editor';
 create or replace function public.team_list() returns table(user_id uuid,email text,role text,pw text) language plpgsql security definer set search_path=public,auth,extensions as $$
 begin
- if not public.is_editor() then raise exception 'not allowed'; end if;
+ if not public.is_admin() then raise exception 'not allowed'; end if;
  return query select m.user_id,u.email::text,m.role,m.pw from public.members m join auth.users u on u.id=m.user_id order by u.email;
 end $$;
 create or replace function public.team_save(p_user uuid,p_email text,p_password text,p_role text) returns void language plpgsql security definer set search_path=public,auth,extensions as $$
 declare uid uuid; em text:=lower(trim(p_email));
 begin
- if not public.is_editor() then raise exception 'not allowed'; end if;
+ if not public.is_admin() then raise exception 'not allowed'; end if;
  if p_role not in ('editor','viewer') then raise exception 'bad role'; end if;
  if p_user is null then select id into uid from auth.users where lower(email)=em; else uid:=p_user; end if;
  if uid=auth.uid() and p_role<>'editor' then raise exception 'cannot demote yourself'; end if;
@@ -53,9 +55,9 @@ begin
 end $$;
 create or replace function public.team_remove(p_user uuid) returns void language plpgsql security definer set search_path=public,auth,extensions as $$
 begin
- if not public.is_editor() then raise exception 'not allowed'; end if;
+ if not public.is_admin() then raise exception 'not allowed'; end if;
  if p_user=auth.uid() then raise exception 'cannot delete yourself'; end if;
  delete from auth.users where id=p_user;
 end $$;
-revoke all on function public.team_list(),public.team_save(uuid,text,text,text),public.team_remove(uuid) from public,anon;
-grant execute on function public.team_list(),public.team_save(uuid,text,text,text),public.team_remove(uuid) to authenticated;
+revoke all on function public.is_admin(),public.team_list(),public.team_save(uuid,text,text,text),public.team_remove(uuid) from public,anon;
+grant execute on function public.is_admin(),public.team_list(),public.team_save(uuid,text,text,text),public.team_remove(uuid) to authenticated;
