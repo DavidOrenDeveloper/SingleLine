@@ -280,3 +280,16 @@ button.cps{width:100%;aspect-ratio:1;height:auto;min-height:0!important;padding:
  .vw .vstage{height:auto;min-height:0}
  .vw.fs.fsm .vhead{padding-inline-start:116px}
 }
+
+/* ===== viewer toolbar: one compact row, floating properties ===== */
+.vtl{display:flex;align-items:center;gap:8px;overflow-x:auto;scrollbar-width:none;padding:6px 10px;background:#fff;border-bottom:1px solid var(--bd)}
+.vtl::-webkit-scrollbar{display:none}
+.vgrp{display:flex;align-items:center;gap:3px;padding:3px;background:#f1f4f9;border:1px solid var(--bd);border-radius:14px;flex:none}
+.vgrp button{border-color:transparent;background:transparent}
+.vgrp button:hover{background:#fff}
+.vgrp button.tl.on{background:#fff;border-color:var(--pri2);color:var(--pri);box-shadow:var(--sh)}
+.vgrp button.pri{background:var(--pri)}
+button.tl{height:50px;min-width:58px}
+.vstage .vprops{position:absolute;top:10px;left:50%;transform:translateX(-50%);max-width:calc(100% - 20px);z-index:5;background:#fff;border:1px solid var(--bd2);border-radius:14px;box-shadow:var(--sh2);padding:6px 10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0}
+.vstage .vprops:empty{display:none}
+@media(min-width:1000px){button.tl{height:54px}}
